@@ -15,7 +15,7 @@ int main() {
     hint[y - 1].push_back(x - 1);
   }
 
-  std::queue<int> chain;
+  std::vector<int> chain;
   int num = 0;
 
   for (int i = 0; i < N; ++i) {
@@ -23,22 +23,22 @@ int main() {
     if (lut[i] == 0) {
       ++num;
       lut[i] = num;
+      chain.clear();
     } else {
       continue;
     }
 
-    chain.push(i);
+    chain.push_back(i);
 
-    while (!chain.empty()) {
-      auto c = chain.front();
+    for (int i = 0; i < chain.size(); ++i) {
+      auto c = chain[i];
       for (auto &h : hint[c]) {
         if (lut[h] == 0) {
           lut[h] = num;
-          chain.push(h);
+          chain.push_back(h);
         }
       }
       hint[c].clear();
-      chain.pop();
     }
   }
 
