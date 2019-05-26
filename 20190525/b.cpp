@@ -1,11 +1,14 @@
 #include <iostream>
 
 int main() {
-  int N, M;
-  std::cin >> N >> M;
+  int r, D, x2000;
+  std::cin >> r >> D >> x2000;
 
-  int result;
-  std::cout << result << std::endl;
+  for (int i = 0; i < 10; ++i) {
+    x2000 = r * x2000 - D;
+    int result = x2000;
+    std::cout << result << std::endl;
+  }
 
   return 0;
 }

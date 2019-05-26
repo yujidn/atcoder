@@ -1,10 +1,10 @@
 #include <iostream>
 
 int main() {
-  int N, M, K;
-  std::cin >> N >> M >> K;
+  int A, P;
+  std::cin >> A >> P;
 
-  int result;
+  int result = (A * 3 + P) / 2;
   std::cout << result << std::endl;
 
   return 0;
