@@ -2,19 +2,19 @@
 #include <cmath>
 #include <iostream>
 
-uint64_t mod = 1000 * 1000 * 1000 + 7;
-
 // あまり大きな数字を入れると桁溢れする
-uint64_t comb(uint64_t n, uint64_t r) {
+template <typename T>
+T comb(T n, T r) {
   // 組み合わせ計算時のかぶっている部分を取り除く
   r = std::min(n - r, r);
-  uint64_t result = 1;
-  for (int i = 1; i <= r; ++i) {
+  T result = 1;
+  T div = 1;
+  for (T i = 1; i <= r; ++i) {
     result = (result * (n - i + 1));
-    result = result / i;
-    // result *= (n--); // 引数破壊を許すならこう
+    // result = result / i;
+    div = div * i;
   }
-  return result;
+  return result / div;
 }
 
 // 値が大きくなる時の対処用のクラス
@@ -26,7 +26,7 @@ class mod_int {
     T pow = MOD - 2;
     T result = 1;
     for (; pow; pow >>= 1, x = x * x % MOD) {
-      if (pow & 1) result = result * x % pow;
+      if (pow & 1) result = result * x % MOD;
     }
     return result;
   }
@@ -47,11 +47,21 @@ class mod_int {
     return *this;
   }
   mint &operator*=(const mint &o) {
-    val = (val * o.mal) % MOD;
+    val = (val * o.val) % MOD;
     return *this;
   }
   mint &operator/=(const mint &o) {
-    val = (val * inverse(o.val));
+    val = (val * inverse(o.val)) % MOD;
+    return *this;
+  }
+
+  mint &operator++() {
+    val = (++val) % MOD;
+    return *this;
+  }
+
+  mint &operator--() {
+    val = (--val) % MOD;
     return *this;
   }
 
@@ -60,19 +70,24 @@ class mod_int {
   mint operator*(const mint &o) const { return mint(*this) *= o; }
   mint operator/(const mint &o) const { return mint(*this) /= o; }
 
-  bool operator<(const mint &o) const { return val < o.mol; }
-  bool operator==(const mint &o) const { return val == o.mol; }
+  void operator=(const mint &o) { this->val = o.val; }
+  void operator=(const int i) { this->val = i; }
+  void operator=(const T i) { this->val = i; }
+
+  bool operator<(const mint &o) const { return val < o.val; }
+  bool operator<=(const mint &o) const { return val <= o.val; }
+  bool operator==(const mint &o) const { return val == o.val; }
 };
 
 // ioのオーバーライド
 template <typename T, T MOD>
-std::istream &operator>>(std::istream &i, mod_int<T, MOD> o) {
-  i >> o.inl;
+std::istream &operator>>(std::istream &i, mod_int<T, MOD> &o) {
+  i >> o.val;
   return i;
 }
 template <typename T, T MOD>
-std::ostream &operator<<(std::ostream &i, mod_int<T, MOD> o) {
-  i << o.inl;
+std::ostream &operator<<(std::ostream &i, mod_int<T, MOD> &o) {
+  i << o.val;
   return i;
 }
 
@@ -80,24 +95,23 @@ std::ostream &operator<<(std::ostream &i, mod_int<T, MOD> o) {
 typedef mod_int<uint64_t, 1000 * 1000 * 1000 + 7> muint64_t;
 
 int main() {
-  int N, M, K;
+  muint64_t N, M, K;
   std::cin >> N >> M >> K;
 
-  uint64_t xsum = 0;
-  int M2 = M * M;
-  for (int xdiff = 1; xdiff <= N; ++xdiff) {
-    xsum = (xsum + xdiff * M2 * (N - xdiff)) % mod;
+  muint64_t xsum = 0;
+  muint64_t M2 = M * M;
+  for (muint64_t xdiff = 1; xdiff <= N; ++xdiff) {
+    xsum = xsum + xdiff * M2 * (N - xdiff);
   }
 
-  uint64_t ysum = 0;
-  int N2 = N * N;
-  for (int ydiff = 1; ydiff <= N; ++ydiff) {
-    ysum = (ysum + ydiff * N2 * (M - ydiff)) % mod;
+  muint64_t ysum = 0;
+  muint64_t N2 = N * N;
+  for (muint64_t ydiff = 1; ydiff <= M; ++ydiff) {
+    ysum = ysum + ydiff * N2 * (M - ydiff);
   }
 
   // uint64_t result = (xsum + ysum) * p / k % (1000 * 1000 * 1000 + 7);
-  uint64_t result =
-      (xsum + ysum) % mod * comb(N * M - 2, K - 2) % (1000 * 1000 * 1000 + 7);
+  muint64_t result = (xsum + ysum) * comb(N * M - 2, K - 2);
   std::cout << result << std::endl;
 
   return 0;
