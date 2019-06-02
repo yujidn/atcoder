@@ -1,4 +1,5 @@
 #include <iostream>
+
 int main(void) {
   std::string s;
   std::cin >> s;
@@ -12,10 +13,14 @@ int main(void) {
   }
 
   for (int i = 0, end = s.length() - 1; i < end; ++i) {
+    // std::cout << i << " " << count << " " << chokuA << std::endl;
     if (s[i] == 'A') {
       ++chokuA;
     } else if ((s[i + 0] == 'B') && (s[i + 1] == 'C')) {
+      // ++count;
+      // --chokuA;
       count += chokuA;
+      s[i + 1] = 'A';
       ++i;
     } else {
       chokuA = 0;
