@@ -7,27 +7,17 @@ int main() {
   int N;
   std::cin >> N;
 
-  std::map<std::string, std::map<int, int>> SP;
+  std::map<std::pair<std::string, int>, int> SP;
 
   for (int i = 0; i < N; ++i) {
     std::string s;
     int p;
     std::cin >> s >> p;
-    auto find = SP.find(s);
-    if (find != SP.end()) {
-      find->second.insert(std::make_pair(p, i + 1));
-    } else {
-      std::map<int, int> pm;
-      pm.insert(std::make_pair(p, i + 1));
-      SP.insert(std::make_pair(s, pm));
-    }
+    SP.insert(std::make_pair(std::make_pair(s, -p), i + 1));
   }
 
-  for (auto &sp : SP) {
-    for (auto iter = sp.second.rbegin(); iter != sp.second.rend(); ++iter) {
-      std::cout << iter->second << std::endl;
-    }
+  for (auto &s : SP) {
+    std::cout << s.second << std::endl;
   }
-
   return 0;
 }
