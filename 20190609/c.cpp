@@ -96,7 +96,7 @@ struct Step {
 };
 
 int main(void) {
-  constexpr auto step = Step<10000>();
+  constexpr auto step = Step<100000>();
 
   int N, M;
   std::cin >> N >> M;
