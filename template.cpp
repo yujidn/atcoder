@@ -28,7 +28,7 @@ template <typename T, T MOD>
 class mod_int {
  private:
   typedef mod_int<T, MOD> mint;
-  T inverse(T x) {
+  constexpr T inverse(T x) {
     T pow = MOD - 2;
     T result = 1;
     while (pow) {
@@ -42,50 +42,78 @@ class mod_int {
  public:
   T val;
   // コンストラクタ
-  mod_int() : val(0) {}
-  mod_int(const mint &o) : val(o.val % MOD) {}
-  mod_int(const T &o) : val(o % MOD) {}
+  constexpr mod_int() : val(0) {}
+  constexpr mod_int(const mint &o) : val(o.val % MOD) {}
+  constexpr mod_int(const T &o) : val(o % MOD) {}
 
-  mint &operator+=(const mint &o) {
+  constexpr mint &operator+=(const mint &o) {
     val = (val + o.val) % MOD;
     return *this;
   }
-  mint &operator-=(const mint &o) {
+  constexpr mint &operator-=(const mint &o) {
     val = (val + MOD - o.val) % MOD;
     return *this;
   }
-  mint &operator*=(const mint &o) {
+  constexpr mint &operator*=(const mint &o) {
     val = (val * o.val) % MOD;
     return *this;
   }
-  mint &operator/=(const mint &o) {
+  constexpr mint &operator/=(const mint &o) {
     val = (val * inverse(o.val)) % MOD;
     return *this;
   }
 
-  mint &operator++() {
+  constexpr mint &operator++() {
     val = (++val) % MOD;
     return *this;
   }
 
-  mint &operator--() {
+  constexpr mint &operator--() {
     val = (--val) % MOD;
     return *this;
   }
 
-  mint operator+(const mint &o) const { return mint(*this) += o; }
-  mint operator-(const mint &o) const { return mint(*this) -= o; }
-  mint operator*(const mint &o) const { return mint(*this) *= o; }
-  mint operator/(const mint &o) const { return mint(*this) /= o; }
+  constexpr mint operator+(const mint &o) const { return mint(*this) += o; }
+  constexpr mint operator-(const mint &o) const { return mint(*this) -= o; }
+  constexpr mint operator*(const mint &o) const { return mint(*this) *= o; }
+  constexpr mint operator/(const mint &o) const { return mint(*this) /= o; }
 
-  void operator=(const mint &o) { this->val = o.val; }
-  void operator=(const int i) { this->val = i; }
-  void operator=(const T i) { this->val = i; }
+  constexpr void operator=(const mint &o) { this->val = o.val; }
+  constexpr void operator=(const int i) { this->val = i; }
+  constexpr void operator=(const T i) { this->val = i; }
 
-  bool operator<(const mint &o) const { return val < o.val; }
-  bool operator<=(const mint &o) const { return val <= o.val; }
-  bool operator==(const mint &o) const { return val == o.val; }
+  constexpr bool operator<(const mint &o) const { return val < o.val; }
+  constexpr bool operator<=(const mint &o) const { return val <= o.val; }
+  constexpr bool operator==(const mint &o) const { return val == o.val; }
 };
+
+// ioのオーバーライド
+template <typename T, T MOD>
+std::istream &operator>>(std::istream &i, mod_int<T, MOD> &o) {
+  i >> o.val;
+  return i;
+}
+template <typename T, T MOD>
+std::ostream &operator<<(std::ostream &i, const mod_int<T, MOD> &o) {
+  i << o.val;
+  return i;
+}
+// 使うクラスのおまじない
+typedef mod_int<uint64_t, 1000 * 1000 * 1000 + 7> muint64_t;
+
+template <uint N>
+struct Step {
+ public:
+  muint64_t step[N];
+  constexpr Step() : step() {
+    step[0] = 1;
+    step[1] = 2;
+    for (int i = 2; i < N - 1; ++i) {
+      step[i] = step[i - 2] + step[i - 1];
+    }
+  }
+};
+
 // ioのオーバーライド
 template <typename T, T MOD>
 std::istream &operator>>(std::istream &i, mod_int<T, MOD> &o) {
