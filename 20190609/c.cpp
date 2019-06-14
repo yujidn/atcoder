@@ -96,7 +96,7 @@ struct Step {
 };
 
 int main(void) {
-  constexpr auto step = Step<100000>();
+  auto step = Step<100001>();
 
   int N, M;
   std::cin >> N >> M;
@@ -107,19 +107,29 @@ int main(void) {
     if (i != M) {
       std::cin >> temp;
     } else {
+      // 入力終わりならゴールまで移動
+      // 後で1歩引くので+1する
       temp = N + 1;
     }
+
+    // 移動不可2連チャン
     if (temp == before) {
       sum = 0;
       break;
     }
-    auto s = temp - before - 2;
+    // 障害物の1歩手前まで移動
+    --temp;
+
+    // 現在位置から目的地までの距離とindex用引き算
+    auto s = temp - before - 1;
     if (s >= 0) {
       sum *= step.step[s];
     } else {
       sum *= muint64_t(1);
     }
-    before = temp + 1;
+    // 現在位置を障害物を飛び越えた場所に更新
+    before = temp + 2;
+    if (before == N) break;
   }
   std::cout << sum << std::endl;
   return 0;
