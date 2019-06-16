@@ -3,24 +3,6 @@
 #include <iostream>
 
 //////////////////////////////////////////////////////
-// 組み合わせ計算
-// あまり大きな数字を入れると桁溢れする
-//////////////////////////////////////////////////////
-template <typename T>
-T comb(T n, T r) {
-  // 組み合わせ計算時のかぶっている部分を取り除く
-  r = std::min(n - r, r);
-  T result = 1;
-  T div = 1;
-  for (T i = 1; i <= r; ++i) {
-    result = (result * (n - i + 1));
-    // result = result / i;
-    div = div * i;
-  }
-  return result / div;
-}
-
-//////////////////////////////////////////////////////
 // 値が大きくなる時の対処用のクラス
 // MODの値は適宜調整すること
 //////////////////////////////////////////////////////
@@ -86,7 +68,6 @@ class mod_int {
   constexpr bool operator<=(const mint &o) const { return val <= o.val; }
   constexpr bool operator==(const mint &o) const { return val == o.val; }
 };
-
 // ioのオーバーライド
 template <typename T, T MOD>
 std::istream &operator>>(std::istream &i, mod_int<T, MOD> &o) {
@@ -114,17 +95,43 @@ struct Step {
   }
 };
 
-// ioのオーバーライド
-template <typename T, T MOD>
-std::istream &operator>>(std::istream &i, mod_int<T, MOD> &o) {
-  i >> o.val;
-  return i;
+int main(void) {
+  auto step = Step<100001>();
+
+  int N, M;
+  std::cin >> N >> M;
+  int before = 0;
+  muint64_t sum = 1;
+  for (int i = 0; i <= M; ++i) {
+    int temp;
+    if (i != M) {
+      std::cin >> temp;
+    } else {
+      // 入力終わりならゴールまで移動
+      // 後で1歩引くので+1する
+      temp = N + 1;
+    }
+
+    // 移動不可2連チャン
+    if (temp == before) {
+      sum = 0;
+      break;
+    }
+    // 障害物の1歩手前まで移動
+    --temp;
+
+    // 現在位置から目的地までの距離とindex用引き算
+    auto s = temp - before - 1;
+    if (s >= 0) {
+      sum *= step.step[s];
+    } else {
+      sum *= muint64_t(1);
+    }
+    // 現在位置を障害物を飛び越えた場所に更新
+    before = temp + 2;
+    if (before == N) break;
+  }
+  std::cout << sum << std::endl;
+  return 0;
 }
-template <typename T, T MOD>
-std::ostream &operator<<(std::ostream &i, const mod_int<T, MOD> &o) {
-  i << o.val;
-  return i;
-}
-// 使うクラスのおまじない
-typedef mod_int<uint64_t, 1000 * 1000 * 1000 + 7> muint64_t;
 
