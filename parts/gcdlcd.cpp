@@ -7,7 +7,7 @@ T gcd(T a, T b) {
     b = tmp;
   }
   // 避け
-  if (a <= 0) {
+  if (b <= 0) {
     return -1;
   }
 
@@ -33,4 +33,3 @@ template <typename T = float>
 T lcm(T a, T b);
 template <typename T = double>
 T lcm(T a, T b);
-
