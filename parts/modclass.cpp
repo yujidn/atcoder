@@ -101,30 +101,3 @@ std::ostream &operator<<(std::ostream &i, const mod_int<T, MOD> &o) {
 // 使うクラスのおまじない
 typedef mod_int<uint64_t, 1000 * 1000 * 1000 + 7> muint64_t;
 
-template <uint N>
-struct Step {
- public:
-  muint64_t step[N];
-  constexpr Step() : step() {
-    step[0] = 1;
-    step[1] = 2;
-    for (int i = 2; i < N - 1; ++i) {
-      step[i] = step[i - 2] + step[i - 1];
-    }
-  }
-};
-
-// ioのオーバーライド
-template <typename T, T MOD>
-std::istream &operator>>(std::istream &i, mod_int<T, MOD> &o) {
-  i >> o.val;
-  return i;
-}
-template <typename T, T MOD>
-std::ostream &operator<<(std::ostream &i, const mod_int<T, MOD> &o) {
-  i << o.val;
-  return i;
-}
-// 使うクラスのおまじない
-typedef mod_int<uint64_t, 1000 * 1000 * 1000 + 7> muint64_t;
-
