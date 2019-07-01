@@ -3,9 +3,6 @@
 #include <map>
 #include <vector>
 
-const int N = 1e5 + 5;
-int xy[N][N];
-
 void check_and_add(std::map<int, std::vector<int>> &map, int x, int y) {
   if (map.count(x) == 0) {
     std::vector<int> vec;

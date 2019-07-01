@@ -101,3 +101,20 @@ std::ostream &operator<<(std::ostream &i, const mod_int<T, MOD> &o) {
 // 使うクラスのおまじない
 typedef mod_int<uint64_t, 1000 * 1000 * 1000 + 7> muint64_t;
 
+int main() {
+  int n, k;
+  std::cin >> n >> k;
+
+  muint64_t blue = k;
+  muint64_t red = n - k;
+
+  // 1
+  std::cout << red + 1 << std::endl;
+
+  for (muint64_t i = 2; i <= k; ++i) {
+    muint64_t redpos = (red - i - 1) * (i + 1);
+    muint64_t bluepos = (blue - i) * i;
+    std::cout << redpos * bluepos << std::endl;
+  }
+}
+
