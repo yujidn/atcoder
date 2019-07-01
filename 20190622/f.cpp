@@ -24,9 +24,9 @@ int pointcount(const std::map<int, std::vector<int>> &xmap,
     const auto &fx = xp.first;
     const auto &yvec = xp.second;
 
-    for (auto fy : yvec) {
+    for (const auto fy : yvec) {
       const auto &xvec = ymap.at(fy);
-      for (auto sx : xvec) {
+      for (const auto sx : xvec) {
         count += (xy[sx][fy] ^ 1);
       }
     }
