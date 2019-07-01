@@ -108,13 +108,15 @@ int main() {
   muint64_t blue = k;
   muint64_t red = n - k;
 
-  // 1
-  std::cout << red + 1 << std::endl;
-
-  for (muint64_t i = 2; i <= k; ++i) {
-    muint64_t redpos = (red - i - 1) * (i + 1);
-    muint64_t bluepos = (blue - i) * i;
-    std::cout << redpos * bluepos << std::endl;
+  for (muint64_t i = 1; i <= k; ++i) {
+    // 赤い玉を並べる
+    // 左端、右端、赤の間(合計red+1候補)からi箇所選んでそこに青の玉を置く予定地とする
+    // (red+1)_C_(i)
+    // 青い玉を並べる
+    // 青の間(合計blue-1候補)からi-1箇所選んで分けるとi分割された青い玉の部分列ができる
+    // (blue-1)_C_(i-1)
+    std::cout << comb(red + 1, i) * comb(blue - 1, i - 1) << std::endl;
   }
+  return 0;
 }
 
