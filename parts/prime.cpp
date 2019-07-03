@@ -45,14 +45,17 @@ constexpr bool miller_rabin(uint64_t val) {
   while ((d & 0x01) == 0) d >>= 1;
 
   for (int i = 0; i < 20; ++i) {
-    auto a = pre_random[i] % (val - 2) + 1;
+    auto a = pre_random[i] % (val - 4) + 2;
     auto t = d;
     auto y = modpow(a, t, val);
-    while ((t != (val - 1)) && (y != 1) && (y != (val - 1))) {
+    if (y == 1 || y == val - 1) return false;
+
+    while (t != val - 1) {
       y = (y * y) % val;
-      t <<= 1;
+      t << 1;
+      if (y == 1) return true;
+      if (y == val - 1) return false;
     }
-    if ((y != val - 1) && (t & 1 == 0)) return false;
   }
   return true;
 }
@@ -74,7 +77,9 @@ constexpr inline bool judge_prime(uint64_t val, uint64_t *prime,
                                   uint64_t prime_num) {
   if (val == 2) return true;
   if ((val & 0x01) == 0) return false;
+  // if (val > 10000) {
   // if (!miller_rabin(val)) return false;
+  // }
 
   for (int i = 0; i < prime_num && prime[i] * prime[i] <= val; ++i) {
     if (val % prime[i] == 0) {
@@ -108,7 +113,7 @@ using Prime = IPrime<target_num, fermat_prime_theorem<target_num>()>;
 
 int main() {
   // constexpr Prime<100000, fermat_prime_theorem<100000>()> prime;
-  constexpr Prime<10000> prime;
+  constexpr Prime<100000> prime;
   for (int i = 0; i < prime.prime_num; ++i) {
     std::cout << prime.prime[i] << std::endl;
   }
