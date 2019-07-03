@@ -70,6 +70,20 @@ constexpr inline bool judge_prime(uint64_t val) {
   return true;
 }
 
+constexpr inline bool judge_prime(uint64_t val, uint64_t *prime,
+                                  uint64_t prime_num) {
+  if (val == 2) return true;
+  if ((val & 0x01) == 0) return false;
+  // if (!miller_rabin(val)) return false;
+
+  for (int i = 0; i < prime_num && prime[i] * prime[i] <= val; ++i) {
+    if (val % prime[i] == 0) {
+      return false;
+    }
+  }
+  return true;
+}
+
 // コンパイル時素数列
 template <uint64_t target_num, uint64_t max_prime_num>
 struct IPrime {
@@ -80,7 +94,7 @@ struct IPrime {
     int counter = 1;
 
     for (uint64_t val = 3; val < target_num; val += 2) {
-      if (judge_prime(val)) {
+      if (judge_prime(val, prime, counter)) {
         prime[counter] = val;
         ++counter;
       }
