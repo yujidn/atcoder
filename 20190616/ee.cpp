@@ -25,15 +25,15 @@ int main(void) {
       auto &up = dp[tl * (i - 1) + j];
       auto &lu = dp[tl * (i - 1) + j - 1];
 
-      now = left + up;
+      now = (left + up) % MOD;
       if (s[i - 1] == t[j - 1])
-        now += 1;
+        now = (now + 1) % MOD;
       else
-        now -= lu;
+        now = (now + MOD - lu) % MOD;
     }
   }
 
-  std::cout << (dp[n * tl + m]) % MOD << std::endl;
+  std::cout << (dp[n * tl + m] + 1) % MOD << std::endl;
 
   std::cout << "dp matrix" << std::endl;
   for (int i = 0; i <= n; ++i) {
