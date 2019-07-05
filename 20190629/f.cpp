@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 #include <vector>
 
@@ -5,32 +6,41 @@ int main() {
   int n, k;
   std::cin >> n >> k;
 
+  --k;
   int size = n + 1;
-  std::vector<int> dp(size * k);
+  std::vector<int64_t> dp(size * k);
 
-  dp[0] = 0;
-  for (int i = 1; i < size; ++i) {
-    dp[i] = 1;
-  }
-
-  for (int i = 1; i < k; ++i) {
+  for (int64_t i = 0; i < k; ++i) {
     dp[i * size + 0] = 0;
-    for (int j = 1; j < size; ++j) {
-      const int &up = dp[(i - 1) * size + j];
-      const int &left = dp[i * size + j - 1];
-      int &now = dp[i * size + j];
-      if (j * j <= n)
-        now = n / j * up + left;
-      else
+    for (int64_t j = 1; j < size; ++j) {
+      const int64_t inc = dp[j] - dp[j - 1];
+      const int64_t &up = dp[(i - 1) * size + j];
+      const int64_t &left = dp[i * size + j - 1];
+      const int64_t &lu = dp[(i - 1) * size + j - 1];
+      int64_t &now = dp[i * size + j];
+
+      if (i == 0)
         now = n / j + left;
+      else
+        now = inc * (up - lu) + left;
     }
   }
 
   std::cout << *(dp.end() - 1) << std::endl;
 
-  for (auto d : dp) {
-    std::cout << d << std::endl;
+  printf("     |");
+  for (int j = 0; j < size; ++j) {
+    printf("%5d", j);
   }
+  std::cout << "\n----------------------\n";
+  for (int i = 0; i < k; ++i) {
+    printf("%5d|", i + 2);
+    for (int j = 0; j < size; ++j) {
+      printf("%5d", dp[i * size + j]);
+    }
+    std::cout << std::endl;
+  }
+
   return 0;
 }
 
