@@ -1,4 +1,3 @@
-#include <cstring>
 #include <iostream>
 #include <vector>
 
@@ -13,16 +12,16 @@ int main() {
   for (int64_t i = 0; i < k; ++i) {
     dp[i * size + 0] = 0;
     for (int64_t j = 1; j < size; ++j) {
-      const int64_t inc = dp[j] - dp[j - 1];
-      const int64_t &up = dp[(i - 1) * size + j];
-      const int64_t &left = dp[i * size + j - 1];
-      const int64_t &lu = dp[(i - 1) * size + j - 1];
       int64_t &now = dp[i * size + j];
-
-      if (i == 0)
+      const int64_t &left = dp[i * size + j - 1];
+      if (i == 0) {
         now = n / j + left;
-      else
-        now = inc * (up - lu) + left;
+      } else {
+        const int64_t &last = dp[i * size - 1];
+        const int64_t &up = dp[(i - 1) * size + j];
+        const int64_t &lu = dp[(i - 1) * size + j - 1];
+        now = (dp[j] - dp[j - 1]) * (up - lu) + left;
+      }
     }
   }
 
@@ -43,4 +42,3 @@ int main() {
 
   return 0;
 }
-
