@@ -1,4 +1,3 @@
-#include <cstring>
 #include <iostream>
 #include <vector>
 
@@ -23,7 +22,6 @@ int main() {
       break;
     }
   }
-  std::cout << cand.size() << std::endl;
 
   --k;
   auto size = cand.size();
@@ -40,12 +38,10 @@ int main() {
     dp[i * size + 0] = 0;
     for (int64_t j = 1; j < size; ++j) {
       int64_t &now = dp[i * size + j];
+      const int64_t &val = dp[i * size - j];
       const int64_t &left = dp[i * size + j - 1];
 
-      const int64_t &up = dp[(i - 1) * size + j];
-      const int64_t &lu = dp[(i - 1) * size + j - 1];
-      const auto diff = (up + MOD - lu) % MOD;
-      now = ((cand[j] * diff) % MOD + left) % MOD;
+      now = ((val * num[j]) % MOD + left) % MOD;
     }
   }
 
@@ -53,25 +49,17 @@ int main() {
 
   printf("     |");
   for (int j = 0; j < size; ++j) {
-    printf("%d,", j);
+    printf("%5d", j);
   }
   std::cout << "\n----------------------\n";
   for (int i = 0; i < k; ++i) {
     printf("%5d|", i + 2);
     for (int j = 0; j < size; ++j) {
-      printf("%d,", dp[i * size + j]);
+      printf("%5d", dp[i * size + j]);
     }
     std::cout << std::endl;
   }
 
-  // std::cout << "\n----------------------\n";
-  // for (int i = 0; i < k; ++i) {
-  //   printf("%5d|", i + 2);
-  //   for (int j = 1; j < size; ++j) {
-  //     printf("%5d", dp[i * size + j] - dp[i * size + j - 1]);
-  //   }
-  //   std::cout << std::endl;
-  // }
   return 0;
 }
 
