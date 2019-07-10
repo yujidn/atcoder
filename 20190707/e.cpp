@@ -5,24 +5,6 @@
 #include <vector>
 
 //////////////////////////////////////////////////////
-// 組み合わせ計算
-// あまり大きな数字を入れると桁溢れする
-//////////////////////////////////////////////////////
-template <typename T>
-T comb(T n, T r) {
-  // 組み合わせ計算時のかぶっている部分を取り除く
-  r = std::min(n - r, r);
-  T result = 1;
-  T div = 1;
-  for (T i = 1; i <= r; ++i) {
-    result = (result * (n - i + 1));
-    // result = result / i;
-    div = div * i;
-  }
-  return result / div;
-}
-
-//////////////////////////////////////////////////////
 // 値が大きくなる時の対処用のクラス
 // MODの値は適宜調整すること
 //////////////////////////////////////////////////////
@@ -103,12 +85,73 @@ std::ostream &operator<<(std::ostream &i, const mod_int<T, MOD> &o) {
 // 使うクラスのおまじない
 typedef mod_int<uint64_t, 1000 * 1000 * 1000 + 7> muint64_t;
 
+muint64_t dfs(const int K, const std::vector<std::vector<int>> &graph,
+              const int now, const int parent = -1) {
+  muint64_t k = K - 2;
+  if (parent == -1) {
+    k = K - 1;
+  }
+  const auto &gg = graph[now];
+  if (K < gg.size()) {
+    return muint64_t(0);
+  }
+
+  muint64_t sum = 1;
+  for (auto g : gg) {
+    if (g == parent) continue;
+
+    sum *= k;
+    --k;
+    sum *= dfs(K, graph, g, now);
+  }
+  return sum;
+}
+
+muint64_t dfs(const int K, const std::vector<std::vector<int>> &graph) {
+  std::queue<std::pair<int, std::vector<int>>> queue;
+  std::vector<int> first;
+  first.push_back(0);
+  queue.push(std::make_pair(-1, first));
+
+  muint64_t sum = 1;
+  const muint64_t _k = K - 2;
+
+  while (queue.size() > 0) {
+    const auto &que = queue.front();
+    auto parent = que.first;
+    auto &sune_list = que.second;
+
+    for (auto now : sune_list) {
+      muint64_t k = _k;
+      if (parent == -1) {
+        k = K - 1;
+      }
+      const auto &gg = graph[now];
+      if (K < gg.size()) {
+        return muint64_t(0);
+      }
+
+      std::vector<int> next;
+      for (auto g : gg) {
+        if (g == parent) continue;
+
+        sum *= k;
+        --k;
+        next.push_back(g);
+      }
+      queue.push(std::make_pair(now, next));
+    }
+    queue.pop();
+  }
+  return sum;
+}
+
 int main() {
   int n, k;
   std::cin >> n >> k;
   std::vector<std::vector<int>> graph(n);
 
-  for (int i = 0; i < n; ++i) {
+  for (size_t i = 0; i < n - 1; ++i) {
     int a, b;
     std::cin >> a >> b;
     --a;
@@ -117,38 +160,9 @@ int main() {
     graph[b].push_back(a);
   }
 
-  std::vector<bool> color(n);
+  // std::cout << muint64_t(k) * dfs(k, graph, 0) << std::endl;
+  std::cout << muint64_t(k) * dfs(k, graph) << std::endl;
 
-  muint64_t sum = 0;
-  int select = 0;
-  for (int i = 0; i < n++; i) {
-    if (!color[i]) {
-      color[i] = true;
-    } else {
-      continue;
-    }
-    if (i == 0) {
-      sum += comb(muint64_t(k - select), muint64_t(select));
-      ++select;
-    }
-    for (auto t1 : graph[i]) {
-      if (!color[t1]) {
-        color[t1] = true;
-      } else {
-        continue;
-      }
-      sum += comb(muint64_t(k - select), muint64_t(select));
-      ++select;
-      for (auto t2 : graph[t1]) {
-        if (!color[t2]) {
-          color[t2] = true;
-        } else {
-          continue;
-        }
-        sum += comb(muint64_t(k - select), muint64_t(select));
-        ++select;
-      }
-    }
-    return 0;
-  }
+  return 0;
+}
 
