@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <vector>
 
@@ -11,16 +12,17 @@ int main() {
     std::cin >> a;
   }
 
-  int64_t max = -1;
-  int64_t color = 0;
+  std::vector<int64_t> seq;
 
   for (auto iter = an.rbegin(); iter != an.rend(); ++iter) {
-    if (*iter >= max) {
-      max = *iter;
-      ++color;
+    auto found = std::upper_bound(seq.begin(), seq.end(), *iter);
+    if (found == seq.end()) {
+      seq.push_back(*iter);
+    } else {
+      *found = *iter;
     }
   }
 
-  std::cout << color << std::endl;
+  std::cout << seq.size() << std::endl;
   return 0;
 }
