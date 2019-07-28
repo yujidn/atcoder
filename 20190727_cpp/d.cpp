@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-const int64_t MOD = 1000 * 1000 * 1000 + 7;
+const uint64_t MOD = 1000 * 1000 * 1000 + 7;
 
 template <uint8_t max_value, uint8_t mod_value>
 struct index_mod {
@@ -14,28 +14,43 @@ struct index_mod {
   }
 };
 
+template <uint8_t mod_value>
+struct sub_index {
+  uint8_t index[mod_value][mod_value - 10];
+  constexpr sub_index() : index() {
+    auto value = 0;
+    for (size_t i = 0; i < mod_value; ++i) {
+      value += 10;
+      for (size_t j = 0; j < mod_value - 10; ++j) {
+        index[i][j] = (value + j) % mod_value;
+      }
+    }
+  }
+};
+
 int main() {
   std::string s;
   std::cin >> s;
 
   // i番目の文字を見た時に13との剰余がnになる個数を数え上げる
-  std::vector<int64_t> dp(2 * 13);
+  std::vector<uint64_t> dp(2 * 13);
 
   constexpr index_mod<13 * 10, 13> imod;
+  constexpr sub_index<13> sindex;
 
-  for (size_t i = 0; i < 130; ++i) {
-    std::cout << (int)imod.mod[i] << ",";
-  }
+  uint64_t row_sum = 0;
 
-  {
+  {  // テーブル初期化
     int val = -1;
     if (s[0] != '?') val = s[0] - '0';
     if (val == -1) {
       for (size_t i = 0; i < 10; ++i) {
         dp[i % 13] = 1;
       }
+      row_sum = 10;
     } else {
       dp[val % 13] = 1;
+      row_sum = 1;
     }
     // % 13は不要だけど定義に帰るため
   }
@@ -44,40 +59,41 @@ int main() {
     int val = -1;
     if (s[i] != '?') val = s[i] - '0';
     if (val == -1) {
-      for (size_t here = 0; here < 10; ++here) {
-        for (size_t pre = 0; pre < 13; ++pre) {
-          auto &here_dp = dp[13 + imod.mod[pre * 10 + here]];
-          const auto &pre_dp = dp[pre];
-          here_dp = here_dp + pre_dp;
+      for (size_t here = 0; here < 13; ++here) {
+        dp[13 + here] = row_sum;
+      }
+      for (size_t here = 0; here < 13; ++here) {
+        const auto &sub = sindex.index[here];
+        for (size_t j = 0; j < 3; ++j) {
+          dp[13 + sub[j]] = dp[13 + sub[j]] + MOD - dp[here];
         }
       }
+
     } else {
       for (size_t pre = 0; pre < 13; ++pre) {
         auto &here_dp = dp[13 + imod.mod[pre * 10 + val]];
         const auto &pre_dp = dp[pre];
-        here_dp = here_dp + pre_dp;
+        here_dp = pre_dp;
       }
     }
+    //
+    //    for (int i = 0; i < 2; ++i) {
+    //      for (int j = 0; j < 13; ++j) {
+    //        std::cout << dp[i * 13 + j] << ",";
+    //      }
+    //      std::cout << std::endl;
+    //    }
 
-    for (int i = 0; i < 2; ++i) {
-      for (int j = 0; j < 13; ++j) {
-        printf("%5d", dp[i * 13 + j]);
-      }
-      std::cout << std::endl;
-    }
-    std::cout << std::endl;
+    row_sum = 0;
     for (size_t i = 0; i < 13; ++i) {
       dp[i] = dp[13 + i] % MOD;
+      row_sum += dp[i];
+      // dp[i] = dp[13 + i];
+      dp[13 + i] = 0;
     }
+    row_sum %= MOD;
   }
 
-  std::cout << dp[5] << std::endl;
-
-  // for (int i = 0, e = s.length(); i < e; ++i) {
-  // for (int j = 0; j < 13; ++j) {
-  //   printf("%5d", dp[i * 13 + j]);
-  // }
-  // std::cout << std::endl;
-  //}
+  std::cout << dp[5] % MOD << std::endl;
   return 0;
 }
