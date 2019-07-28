@@ -73,18 +73,17 @@ int main() {
     int val = -1;
     if (s[i] != '?') val = s[i] - '0';
     if (val == -1) {
+      auto temp_sum = row_sum + 3 * MOD;
       for (size_t here = 0; here < 13; ++here) {
-        auto temp_sum = row_sum + 3 * MOD;
+        uint64_t no_need = 0;
         for (size_t j = 0; j < 3; ++j) {
-          temp_sum -= dp[sindex.index[here][j]];
+          no_need += dp[sindex.index[here][j]];
         }
-        dp[13 + here] = temp_sum;
+        dp[13 + here] = temp_sum - no_need;
       }
     } else {
       for (size_t pre = 0; pre < 13; ++pre) {
-        auto &here_dp = dp[13 + imod.mod[pre * 10 + val]];
-        const auto &pre_dp = dp[pre];
-        here_dp = pre_dp;
+        dp[13 + imod.mod[pre * 10 + val]] = dp[pre];
       }
     }
 
@@ -98,9 +97,8 @@ int main() {
     row_sum = 0;
     for (size_t i = 0; i < 13; ++i) {
       dp[i] = dp[13 + i] % MOD;
-      row_sum += dp[i];
+      row_sum += dp[13 + i];
       // dp[i] = dp[13 + i];
-      dp[13 + i] = 0;
     }
     row_sum %= MOD;
   }
