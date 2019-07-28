@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -19,16 +20,22 @@ struct sub_index {
   uint8_t index[mod_value][mod_value - 10];
   constexpr sub_index() : index() {
     auto value = 0;
+    uint8_t in[mod_value] = {0};
     for (size_t i = 0; i < mod_value; ++i) {
       value += 10;
       for (size_t j = 0; j < mod_value - 10; ++j) {
-        index[i][j] = (value + j) % mod_value;
+        // index[i][j] = (value + j) % mod_value;
+        auto v = (value + j) % mod_value;
+        index[v][in[v]] = i;
+        ++in[v];
       }
     }
   }
 };
 
 int main() {
+  std::ios::sync_with_stdio(false);
+
   std::string s;
   std::cin >> s;
 
@@ -37,6 +44,13 @@ int main() {
 
   constexpr index_mod<13 * 10, 13> imod;
   constexpr sub_index<13> sindex;
+
+  // for (size_t i = 0; i < 13; ++i) {
+  // for (size_t j = 0; j < 3; ++j) {
+  //   std::cout << (int)sindex.index[i][j] << ",";
+  // }
+  // std::cout << std::endl;
+  // }
 
   uint64_t row_sum = 0;
 
@@ -60,15 +74,12 @@ int main() {
     if (s[i] != '?') val = s[i] - '0';
     if (val == -1) {
       for (size_t here = 0; here < 13; ++here) {
-        dp[13 + here] = row_sum;
-      }
-      for (size_t here = 0; here < 13; ++here) {
-        const auto &sub = sindex.index[here];
+        auto temp_sum = row_sum + 3 * MOD;
         for (size_t j = 0; j < 3; ++j) {
-          dp[13 + sub[j]] = dp[13 + sub[j]] + MOD - dp[here];
+          temp_sum -= dp[sindex.index[here][j]];
         }
+        dp[13 + here] = temp_sum;
       }
-
     } else {
       for (size_t pre = 0; pre < 13; ++pre) {
         auto &here_dp = dp[13 + imod.mod[pre * 10 + val]];
@@ -76,14 +87,14 @@ int main() {
         here_dp = pre_dp;
       }
     }
-    //
-    //    for (int i = 0; i < 2; ++i) {
-    //      for (int j = 0; j < 13; ++j) {
-    //        std::cout << dp[i * 13 + j] << ",";
-    //      }
-    //      std::cout << std::endl;
-    //    }
 
+    //     for (int i = 0; i < 2; ++i) {
+    //     for (int j = 0; j < 13; ++j) {
+    //       std::cout << dp[i * 13 + j] << ",";
+    //     }
+    //     std::cout << std::endl;
+    //   }
+    //
     row_sum = 0;
     for (size_t i = 0; i < 13; ++i) {
       dp[i] = dp[13 + i] % MOD;
@@ -94,6 +105,6 @@ int main() {
     row_sum %= MOD;
   }
 
-  std::cout << dp[5] % MOD << std::endl;
+  std::cout << dp[5] % MOD << "\n";
   return 0;
 }
