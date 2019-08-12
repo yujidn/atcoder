@@ -34,16 +34,16 @@ inline int64_t hash(char *str, int start, int end) {
 int main() {
   int n;
   scanf("%d", &n);
+  std::vector<int64_t> sn(n);
 
   char input[100000 * 11 + 5];
 
+  // 文字列の一括入力
   fread(input, sizeof(char), sizeof(char) * 11 * n, stdin);
 
-  std::vector<int64_t> sn(n);
-
   for (int i = 0; i < n; ++i) {
+    // 一文字目に改行(Nの後の改行のこと)が存在するので+1する
     sn[i] = hash(input, i * 11 + 1, i * 11 + 10 + 1);
-    std::cout << sn[i] << std::endl;
   }
 
   std::sort(sn.begin(), sn.end());
@@ -58,7 +58,7 @@ int main() {
     }
   }
 
-  printf("%d\n", count);
+  printf("%ld\n", count);
 
   return 0;
 }
