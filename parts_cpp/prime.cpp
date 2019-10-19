@@ -111,26 +111,51 @@ struct IPrime {
 template <uint64_t target_num>
 using Prime = IPrime<target_num, fermat_prime_theorem<target_num>()>;
 
-int main() {
-  // constexpr Prime<100000, fermat_prime_theorem<100000>()> prime;
-  constexpr Prime<100000> prime;
-  for (int i = 0; i < prime.prime_num; ++i) {
-    std::cout << prime.prime[i] << std::endl;
+// 最大公約数
+template <typename T>
+T gcd(T a, T b) {
+  if (b > a) {
+    T tmp = a;
+    a = b;
+    b = tmp;
   }
-  std::cout << "prime num:" << prime.prime_num << std::endl;
-
-  std::cout << fermat_prime_theorem<10>() << std::endl;
-  std::cout << fermat_prime_theorem<100>() << std::endl;
-  std::cout << fermat_prime_theorem<1000>() << std::endl;
-  std::cout << fermat_prime_theorem<10000>() << std::endl;
-  std::cout << fermat_prime_theorem<100000>() << std::endl;
-
-  std::random_device seed_gen;
-  std::mt19937 engine(seed_gen());
-  std::uniform_int_distribution<> dist(1, INT32_MAX);
-  for (int i = 0; i < 20; ++i) {
-    std::cout << dist(engine) << ",";
+  // 避け
+  if (b <= 0) {
+    return -1;
   }
-  std::cout << std::endl;
+
+  T r = a % b;
+  while (r != 0) {
+    a = b;
+    b = r;
+    r = a % b;
+  }
+  return b;
 }
+template <typename T = float>
+T gcd(T a, T b);
+template <typename T = double>
+T gcd(T a, T b);
+
+// 最小公倍数
+template <typename T>
+T lcm(T a, T b) {
+  return a * b / gcd(a, b);
+}
+template <typename T = float>
+T lcm(T a, T b);
+template <typename T = double>
+T lcm(T a, T b);
+
+int main() {
+  uint64_t A, B;
+  std::cin >> A >> B;
+  auto tar = gcd(A, B);
+
+  int p = 0;
+  for (int i = 0; i < prime_num && prime[i] * prime[i] <= val; ++i) {
+    int64_t num = 0;
+
+    return 0;
+  }
 
